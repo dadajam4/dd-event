@@ -1,0 +1,43 @@
+{
+  "name": "dd-ev",
+  "version": "0.0.1",
+  "description": "Simple event observer.",
+  "main": "lib/dd-ev.umd.js",
+  "module": "lib/dd-ev.umd.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "tsc -p ./tsconfig.json --rootDir ./src && rollup -c",
+    "test": "jest --config=jest.config.json --notify --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/dadajam4/dd-ev.git"
+  },
+  "keywords": [
+    "Events",
+    "addEventListener",
+    "emitter"
+  ],
+  "author": "dadajam4",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dadajam4/dd-ev/issues"
+  },
+  "homepage": "https://github.com/dadajam4/dd-ev#readme",
+  "devDependencies": {
+    "@types/jest": "^23.3.5",
+    "jest": "^23.6.0",
+    "rimraf": "^2.6.2",
+    "rollup": "^0.66.6",
+    "ts-jest": "^23.10.4",
+    "typescript": "^3.1.2"
+  },
+  "typings": "./lib/dd-ev.d.ts"
+}

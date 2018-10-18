@@ -1,0 +1,14 @@
+{
+  "transform": {
+    "^.+\\.tsx?$": "ts-jest"
+  },
+  "transformIgnorePatterns": ["/node_modules/(?!lodash-es)"],
+  "testRegex": "(/test/.*(spec))\\.(jsx?|tsx?)$",
+  "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node", "vue"],
+  "moduleDirectories": ["node_modules"],
+  "globals": {
+    "ts-jest": {
+      "tsConfig": "tsconfig.json"
+    }
+  }
+}

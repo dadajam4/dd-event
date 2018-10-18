@@ -1,0 +1,40 @@
+#########################
+# temporary files
+#########################
+npm-debug.log
+.DS_Store
+*.tmp
+
+#########################
+# private files
+#########################
+
+# editor setting
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# modules
+node_modules
+
+# environments
+package-lock.json
+.node-version
+
+#########################
+# build files
+#########################
+lib
+
+#########################
+# test coverage
+#########################
+coverage
+
+#########################
+# others
+#########################
+
+# for child directories...
+!.gitignore
