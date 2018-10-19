@@ -1,10 +1,12 @@
 import DDEV, { DDEVStackRemover } from './DDEV';
 
+export type DDEVListenerTag = number | string | Object;
+
 export default class DDEVListener {
   readonly context: DDEV;
   readonly type: string | null | undefined;
-  readonly tag?: string;
-  readonly callback: Function;
+  readonly tag?: DDEVListenerTag;
+  readonly handler: Function;
   readonly once: boolean;
 
   constructor({
@@ -12,21 +14,21 @@ export default class DDEVListener {
     remover,
     type,
     tag,
-    callback,
+    handler,
     once = false,
   }: {
     context: DDEV;
     remover: DDEVStackRemover;
     type: string;
-    tag?: string;
-    callback: Function;
+    tag?: DDEVListenerTag;
+    handler: Function;
     once: boolean;
   }) {
     this.context = context;
     this._remover = remover;
     this.type = type;
     this.tag = tag;
-    this.callback = callback;
+    this.handler = handler;
     this.once = once;
   }
 
@@ -40,21 +42,23 @@ export default class DDEVListener {
 
     self.context = null;
     self._remover = null;
-    self.callback = null;
+    self.handler = null;
+    self.tag = null;
 
     delete self.context;
     delete self._remover;
-    delete self.callback;
+    delete self.handler;
+    delete self.tag;
   }
 
   /**
-   * Check match condition by type or callback or tag
+   * Check match condition by type or handler or tag
    * @param type
-   * @param callback
+   * @param handler
    * @param tag
    */
-  match(type?: string | null, callback?: Function, tag?: string) {
-    if (callback && callback !== this.callback) return false;
+  match(type?: string | null, handler?: Function, tag?: DDEVListenerTag) {
+    if (handler && handler !== this.handler) return false;
     if (type && this.type !== type) {
       return false;
     }
@@ -69,7 +73,7 @@ export default class DDEVListener {
    * @param params
    */
   trigger(params?: any) {
-    this.callback(params, this);
+    this.handler(params, this);
     if (this.once) {
       this.remove();
     }

@@ -42,8 +42,8 @@ describe('on', () => {
     const ev = new DDEV();
     const listeners = getListeners(ev);
     const listenr1 = ev.on('test', () => {});
-    const listenr2 = ev.on('test', () => {}, { immediate: true });
-    const listenr3 = ev.on('test3', () => {});
+    const listenr2 = ev.on('test', { handler: () => {}, immediate: true });
+    const listenr3 = ev.on({ type: 'test3', handler: () => {} });
     const listenr4 = ev.on('test4', () => {}, { tag: 'fuga' });
     expect(listeners.length).toStrictEqual(4);
     expect(listeners[0]).toStrictEqual(listenr1);
@@ -75,9 +75,12 @@ describe('on', () => {
 
     ev.on('e1', p => expect(p).toStrictEqual(1));
     ev.on('e1', p => expect(p).toStrictEqual(1), { tag: 'tag1' });
-    ev.on('e2', p => expect(p).toStrictEqual('str'));
+    ev.on('e2', { handler: p => expect(p).toStrictEqual('str') });
     ev.on('e3', p => expect(p).toStrictEqual(true));
-    ev.on('e3', p => expect(p).toStrictEqual(true), 'tag2');
+    ev.on('e3', {
+      handler: p => expect(p).toStrictEqual(true),
+      tag: 'tag2',
+    });
 
     ev.emit('e1', 1);
     ev.emit('e2', 'str');
@@ -87,19 +90,53 @@ describe('on', () => {
 
 describe('once', () => {
   it('should can once', done => {
+    let count = 3;
+    function check() {
+      count--;
+      if (count === 0) {
+        expect(listeners.length).toStrictEqual(0);
+        done();
+      }
+    }
+
     const ev = new DDEV();
     const listeners = getListeners(ev);
-    const listener = ev.once('test', () => {
+    const listener1 = ev.once('test', payload => {
+      expect(payload).toBe('fuga');
       setTimeout(() => {
-        expect(listeners.length).toStrictEqual(0);
-        expect(listener.context).toBeUndefined();
-        expect((listener as any)._remover).toBeUndefined();
-        expect(listener.callback).toBeUndefined();
-        done();
+        expect(listener1.context).toBeUndefined();
+        expect((listener1 as any)._remover).toBeUndefined();
+        expect(listener1.handler).toBeUndefined();
+        check();
       }, 0);
     });
-    expect(listeners.length).toStrictEqual(1);
-    ev.emit('test');
+    const listener2 = ev.once('test', {
+      handler: payload => {
+        expect(payload).toBe('fuga');
+        setTimeout(() => {
+          expect(listener2.context).toBeUndefined();
+          expect((listener2 as any)._remover).toBeUndefined();
+          expect(listener2.handler).toBeUndefined();
+          check();
+        }, 0);
+      },
+    });
+
+    const listener3 = ev.once({
+      type: 'test',
+      handler: payload => {
+        expect(payload).toBe('fuga');
+        setTimeout(() => {
+          expect(listener3.context).toBeUndefined();
+          expect((listener3 as any)._remover).toBeUndefined();
+          expect(listener3.handler).toBeUndefined();
+          check();
+        }, 0);
+      },
+    });
+
+    expect(listeners.length).toStrictEqual(3);
+    ev.emit('test', 'fuga');
   });
 });
 
@@ -109,7 +146,7 @@ describe('off', () => {
     const listeners = getListeners(ev);
     const listener = ev.on('test1', () => {});
     ev.on('test2', () => {});
-    ev.on('test3', () => {}, 'tag1');
+    ev.on('test3', { handler: () => {}, tag: 'tag1' });
 
     expect(listeners.length).toStrictEqual(3);
     ev.off('test4');
@@ -117,11 +154,13 @@ describe('off', () => {
     ev.off('test1');
     expect(listener.context).toBeUndefined();
     expect((listener as any)._remover).toBeUndefined();
-    expect(listener.callback).toBeUndefined();
+    expect(listener.handler).toBeUndefined();
     expect(listeners.length).toStrictEqual(2);
-    ev.off('test3');
+    ev.off({ type: 'test3' });
     expect(listeners.length).toStrictEqual(1);
-    ev.off('test2');
+    ev.off({ type: 'test2', tag: '222' });
+    expect(listeners.length).toStrictEqual(1);
+    ev.off({ type: 'test2' });
     expect(listeners.length).toStrictEqual(0);
   });
 
@@ -133,7 +172,7 @@ describe('off', () => {
     const cb3 = () => {};
     const listener = ev.on('test1', cb1);
     ev.on('test2', cb2);
-    ev.on('test3', cb3, 'tag1');
+    ev.on('test3', { handler: cb3, tag: 'tag1' });
     ev.off(() => {});
     expect(listeners.length).toStrictEqual(3);
     ev.off('test1', () => {});
@@ -142,8 +181,10 @@ describe('off', () => {
     expect(listeners.length).toStrictEqual(2);
     expect(listener.context).toBeUndefined();
     expect((listener as any)._remover).toBeUndefined();
-    expect(listener.callback).toBeUndefined();
-    ev.off(cb2);
+    expect(listener.handler).toBeUndefined();
+    ev.off({ handler: cb2, tag: 'fuga' });
+    expect(listeners.length).toStrictEqual(2);
+    ev.off({ handler: cb2 });
     expect(listeners.length).toStrictEqual(1);
     ev.off(cb2);
     expect(listeners.length).toStrictEqual(1);
@@ -154,26 +195,31 @@ describe('off', () => {
   it('should can off by tag', () => {
     const ev = new DDEV();
     const listeners = getListeners(ev);
-    const listener = ev.on('test1', () => {}, { tag: 'tag1' });
-    ev.on('test2', () => {}, 'tag1');
+
+    const tag1 = 'tag1';
+    const tag2 = {};
+    const tag3 = class Tag3 {};
+
+    const listener = ev.on('test1', () => {}, { tag: tag1 });
+    ev.on('test2', () => {}, { tag: tag1 });
     ev.on('test2', () => {});
-    ev.on('test3', () => {}, 'tag2');
-    ev.on('test4', () => {}, 'tag2');
-    ev.on('test5', () => {}, { tag: 'tag2' });
+    ev.on('test3', () => {}, { tag: tag2 });
+    ev.on('test4', () => {}, { tag: tag2 });
+    ev.on('test5', () => {}, { tag: tag2 });
 
     expect(listeners.length).toStrictEqual(6);
-    ev.off(undefined, 'tag9');
+    ev.off({ tag: tag3 });
     expect(listeners.length).toStrictEqual(6);
-    ev.off('test3', 'tag1');
+    ev.off('test3', { tag: tag1 });
     expect(listeners.length).toStrictEqual(6);
-    ev.off(undefined, 'tag1');
+    ev.off({ tag: tag1 });
     expect(listeners.length).toStrictEqual(4);
     expect(listener.context).toBeUndefined();
     expect((listener as any)._remover).toBeUndefined();
-    expect(listener.callback).toBeUndefined();
-    ev.off('test3', 'tag2');
+    expect(listener.handler).toBeUndefined();
+    ev.off('test3', { tag: tag2 });
     expect(listeners.length).toStrictEqual(3);
-    ev.off(null, 'tag2');
+    ev.off({ tag: tag2 });
     expect(listeners.length).toStrictEqual(1);
     ev.off('test2');
     expect(listeners.length).toStrictEqual(0);
@@ -184,18 +230,18 @@ describe('offAll', () => {
   it('should can off All', () => {
     const ev = new DDEV();
     const listeners = getListeners(ev);
-    const listener = ev.on('test1', () => {}, { tag: 'tag1' }); // ★
-    ev.on('test2', () => {}, 'tag1');
+    const listener = ev.on('test1', () => {}, { tag: 'tag1' });
+    ev.on('test2', () => {}, { tag: 'tag1' });
     ev.on('test2', () => {});
-    ev.on('test3', () => {}, 'tag2'); // ★
-    ev.on('test4', () => {}, 'tag2');
-    ev.on('test5', () => {}, { tag: 'tag2' }); // ★
+    ev.on('test3', () => {}, { tag: 'tag2' });
+    ev.on('test4', () => {}, { tag: 'tag2' });
+    ev.on('test5', () => {}, { tag: 'tag2' });
 
     expect(listeners.length).toStrictEqual(6);
     ev.offAll();
     expect(listeners.length).toStrictEqual(0);
     expect(listener.context).toBeUndefined();
     expect((listener as any)._remover).toBeUndefined();
-    expect(listener.callback).toBeUndefined();
+    expect(listener.handler).toBeUndefined();
   });
 });

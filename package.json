@@ -1,6 +1,6 @@
 {
   "name": "dd-ev",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Simple event observer.",
   "main": "lib/dd-ev.umd.js",
   "module": "lib/dd-ev.umd.js",

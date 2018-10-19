@@ -1,2 +1,2 @@
-# dd-ev
+# dd-event
 Simple event observer.
