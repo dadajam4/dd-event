@@ -1,6 +1,6 @@
 {
   "name": "dd-event",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Simple event observer.",
   "main": "lib/dd-ev.umd.js",
   "module": "lib/dd-ev.umd.js",
@@ -23,9 +23,10 @@
     "url": "git+ssh://git@github.com/dadajam4/dd-ev.git"
   },
   "keywords": [
-    "Events",
     "addEventListener",
-    "emitter"
+    "emitter",
+    "Events",
+    "TypeScript"
   ],
   "author": "dadajam4",
   "license": "MIT",
