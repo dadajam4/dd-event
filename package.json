@@ -15,7 +15,7 @@
   "scripts": {
     "prepublish": "npm run build",
     "build": "tsc -p ./tsconfig.json --rootDir ./src && rollup -c",
-    "docs": "rimraf ./docs && typedoc src --out docs --includeDeclarations --excludeExternals --mode modules",
+    "docs": "rimraf ./docs && typedoc src --out docs --includeDeclarations --excludeExternals --mode modules && touch ./docs/.nojekyll",
     "test": "jest --config=jest.config.json --notify --coverage"
   },
   "repository": {
