@@ -1,19 +1,40 @@
 import DDEVListener, { DDEVListenerTag } from './DDEVListener';
 
-export interface OnOption {
-  tag?: DDEVListenerTag;
-  immediate?: boolean;
-}
-
-export type DDEVStackRemover = (stack: DDEVListener) => void;
-
+/**
+ * This is the default event map.
+ */
 export interface DDEVEventMap {
   [key: string]: any;
 }
 
+/**
+ * By setting it to true, callback is immediately executed at the same time as listener registration.
+ */
+export type ImmediateOption = boolean;
+
+/**
+ * The context class for event operations.<br>
+ * You can use as it is or inherit any classes in this class.<br>
+ * <pre><code>const dv = new DDEV();
+ * // or...
+ * class SomeClass extends DDEV {}
+ * </code></pre>
+ * When using it with TypeScript, it is possible to strictly set type information by specifying an interface in Generics.<br>
+ * <pre><code>class SomeClass extends DDEV<{event1: string, event2: boolean}> {
+ *   constructor() {
+ *     super();
+ *     this.emit('event1', 5); // ng
+ *     this.emit('event1', 'string'); // ok
+ *     this.on('event2', event => {
+ *       const var1: string = event; // ng
+ *       const var2: boolean = event; // ok
+ *     });
+ *   }
+ * }</code></pre>
+ */
 export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
   /**
-   * Create and return listener instance by type, handler
+   * Create and return listener instance by type, handler.
    * @param type
    * @param handler
    */
@@ -23,7 +44,7 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
   ): DDEVListener;
 
   /**
-   * Create and return listener instance by type, handler, option
+   * Create and return listener instance by type, handler, option.
    * @param type
    * @param handler
    * @param option
@@ -33,13 +54,13 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
     handler: (ev: EventMap[K]) => any,
     option: {
       tag?: DDEVListenerTag;
-      immediate?: boolean;
+      immediate?: ImmediateOption;
       once?: boolean;
     },
   ): DDEVListener;
 
   /**
-   * Create and return listener instance by type, handler, once
+   * Create and return listener instance by type, handler, once.
    * @param type
    * @param handler
    * @param option
@@ -50,13 +71,13 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
     handler: (ev: EventMap[K]) => any,
     option: {
       tag?: DDEVListenerTag;
-      immediate?: boolean;
+      immediate?: ImmediateOption;
     },
     once?: boolean,
   ): DDEVListener;
 
   /**
-   * Create and return listener instance by type, option
+   * Create and return listener instance by type, option.
    * @param type
    * @param option
    */
@@ -65,20 +86,20 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
     option: {
       handler: ((ev: EventMap[K]) => any);
       tag?: DDEVListenerTag;
-      immediate?: boolean;
+      immediate?: ImmediateOption;
       once?: boolean;
     },
   ): DDEVListener;
 
   /**
-   * Create and return listener instance by option
+   * Create and return listener instance by option.
    * @param option
    */
   on<K extends keyof EventMap>(option: {
     type: K;
     handler: (ev: EventMap[K]) => any;
     tag?: DDEVListenerTag;
-    immediate?: boolean;
+    immediate?: ImmediateOption;
     once?: boolean;
   }): DDEVListener;
 
@@ -89,7 +110,7 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
           type: K;
           handler: (ev: EventMap[K]) => any;
           tag?: DDEVListenerTag;
-          immediate?: boolean;
+          immediate?: ImmediateOption;
           once?: boolean;
         },
     handlerOrOption?:
@@ -97,12 +118,12 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
       | {
           handler: (ev: EventMap[K]) => any;
           tag?: DDEVListenerTag;
-          immediate?: boolean;
+          immediate?: ImmediateOption;
           once?: boolean;
         },
     option?: {
       tag?: DDEVListenerTag;
-      immediate?: boolean;
+      immediate?: ImmediateOption;
       once?: boolean;
     },
     once?: boolean,
@@ -152,7 +173,7 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
   }
 
   /**
-   * Create and return listener instance by type, handler
+   * Create and return listener instance by type, handler.
    * This listener is deleted when it detects an event only once.
    * @param type
    * @param handler
@@ -163,7 +184,7 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
   ): DDEVListener;
 
   /**
-   * Create and return listener instance by type, handler, option
+   * Create and return listener instance by type, handler, option.
    * This listener is deleted when it detects an event only once.
    * @param type
    * @param handler
@@ -174,12 +195,12 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
     handler: (ev: EventMap[K]) => any,
     option: {
       tag?: DDEVListenerTag;
-      immediate?: boolean;
+      immediate?: ImmediateOption;
     },
   ): DDEVListener;
 
   /**
-   * Create and return listener instance by type, option
+   * Create and return listener instance by type, option.
    * This listener is deleted when it detects an event only once.
    * @param type
    * @param option
@@ -189,12 +210,12 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
     option: {
       handler: ((ev: EventMap[K]) => any);
       tag?: DDEVListenerTag;
-      immediate?: boolean;
+      immediate?: ImmediateOption;
     },
   ): DDEVListener;
 
   /**
-   * Create and return listener instance by option
+   * Create and return listener instance by option.
    * This listener is deleted when it detects an event only once.
    * @param option
    */
@@ -202,7 +223,7 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
     type: K;
     handler: (ev: EventMap[K]) => any;
     tag?: DDEVListenerTag;
-    immediate?: boolean;
+    immediate?: ImmediateOption;
   }): DDEVListener;
 
   once<K extends keyof EventMap>(
@@ -212,18 +233,18 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
           type: K;
           handler: (ev: EventMap[K]) => any;
           tag?: DDEVListenerTag;
-          immediate?: boolean;
+          immediate?: ImmediateOption;
         },
     handlerOrOption?:
       | ((ev: EventMap[K]) => any)
       | {
           handler: (ev: EventMap[K]) => any;
           tag?: DDEVListenerTag;
-          immediate?: boolean;
+          immediate?: ImmediateOption;
         },
     option?: {
       tag?: DDEVListenerTag;
-      immediate?: boolean;
+      immediate?: ImmediateOption;
     },
   ): DDEVListener {
     return this.on(<any>typeOrOption, <any>handlerOrOption, <any>option, true);
@@ -236,7 +257,7 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
   off<K extends keyof EventMap>(type: K): void;
 
   /**
-   * Remove listener by type and handler
+   * Remove listener by type and handler.
    * @param type
    * @param handler
    */
@@ -246,7 +267,7 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
   ): void;
 
   /**
-   * Remove listener by type and option
+   * Remove listener by type and option.
    * @param type
    * @param option
    */
@@ -259,13 +280,13 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
   ): void;
 
   /**
-   * Remove listener by handler
+   * Remove listener by handler.
    * @param handler
    */
   off<K extends keyof EventMap>(handler: (ev: EventMap[K]) => any): void;
 
   /**
-   * Remove listener by option(tag, handler, tag)
+   * Remove listener by option(tag, handler, tag).
    * @param option
    */
   off<K extends keyof EventMap>(option: {
@@ -326,7 +347,7 @@ export default class DDEV<EventMap extends DDEVEventMap = DDEVEventMap> {
   }
 
   /**
-   * Emit event
+   * Emit event.
    * @param type
    * @param payload
    */

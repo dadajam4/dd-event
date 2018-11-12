@@ -1,6 +1,12 @@
-import DDEV, { DDEVStackRemover } from './DDEV';
+import DDEV from './DDEV';
 
+/**
+ * Any tag can be set for the listener. (Registration of objects as well as character strings is also possible)
+ * By setting this tag when registering a listener with [[DDEV.on]] or [[DDEV.once]]
+ * With [[DDEV.off]] you can release related listeners at once.
+ */
 export type DDEVListenerTag = number | string | Object;
+type DDEVStackRemover = (stack: DDEVListener) => void;
 
 export default class DDEVListener {
   readonly context: DDEV;
@@ -33,7 +39,7 @@ export default class DDEVListener {
   }
 
   /**
-   * Remove this instance from parent context
+   * Remove this instance from parent context.
    */
   remove() {
     this._remover(this);
@@ -52,7 +58,7 @@ export default class DDEVListener {
   }
 
   /**
-   * Check match condition by type or handler or tag
+   * Check match condition by type or handler or tag.
    * @param type
    * @param handler
    * @param tag
@@ -69,7 +75,7 @@ export default class DDEVListener {
   }
 
   /**
-   * Trigger this listener
+   * Trigger this listener.
    * @param params
    */
   trigger(params?: any) {
