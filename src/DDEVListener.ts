@@ -5,7 +5,7 @@ import DDEV from './DDEV';
  * By setting this tag when registering a listener with [[DDEV.on]] or [[DDEV.once]]
  * With [[DDEV.off]] you can release related listeners at once.
  */
-export type DDEVListenerTag = number | string | Object;
+export type DDEVListenerTag = number | string | Symbol | Object;
 type DDEVStackRemover = (stack: DDEVListener) => void;
 
 export default class DDEVListener {
