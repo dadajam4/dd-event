@@ -1,7 +1,7 @@
 # dd-event
 Simple Class basesd event observer.(With TypeScript type injection)
 
-[docs](https://dadajam4.github.io/dd-event/modules/_ddev_.html)
+[docs](https://dadajam4.github.io/dd-event/classes/_ddev_.ddev.html)
 
 ## Usage
 
