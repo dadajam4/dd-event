@@ -1,6 +1,6 @@
 {
   "name": "dd-event",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Simple event observer.",
   "main": "lib/dd-ev.umd.js",
   "module": "lib/dd-ev.umd.js",
@@ -14,6 +14,7 @@
   ],
   "scripts": {
     "prepublish": "npm run build && npm run docs",
+    "postinstall": "node postinstall.js",
     "build": "tsc -p ./tsconfig.json --rootDir ./src && rollup -c",
     "docs": "rimraf ./docs && typedoc src --out docs --includeDeclarations --excludeExternals --mode modules && touch ./docs/.nojekyll",
     "test": "jest --config=jest.config.json --notify --coverage"

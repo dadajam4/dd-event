@@ -1,4 +1,6 @@
 # dd-event
+___This package has been moved to: [https://www.npmjs.com/package/@dadajam4/ev](https://www.npmjs.com/package/@dadajam4/ev)___
+
 Simple Class basesd event observer.(With TypeScript type injection)
 
 [docs](https://dadajam4.github.io/dd-event/classes/_ddev_.ddev.html)
